@@ -301,12 +301,15 @@ export const sendChatMessage = async (messages: ChatMessage[]): Promise<string> 
       body: JSON.stringify({ message: userInput })
     });
     if (!response.ok) {
+      console.error("API error status:", response.status, response.statusText);
       throw new Error(`API error: ${response.status}`);
     }
     const data = await response.json();
+    console.log("API response data:", data);
     // Asumsikan response API berupa { reply: "..." } atau { message: "..." }
     return data.reply || data.message || JSON.stringify(data);
   } catch (error) {
+    console.error("API fetch error:", error);
     return `⚠️ Error: ${(error as Error).message}`;
   }
 };
