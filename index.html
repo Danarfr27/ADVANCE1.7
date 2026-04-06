@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="WORM AI - Cyber Intelligence Interface. Advanced AI assistant for cyber operations and intelligence gathering." />
+  <meta name="theme-color" content="#050505" />
+  <meta name="author" content="WORM AI" />
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap"
+    rel="stylesheet" />
+
+  <title>WORM AI - Cyber Intelligence Interface</title>
+
+  <style>
+    /* Critical CSS for loading state */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: #050505;
+      color: #e0e0e0;
+      font-family: 'Share Tech Mono', monospace;
+      overflow-x: hidden;
+    }
+
+    #root {
+      min-height: 100vh;
+    }
+
+    /* Loading spinner */
+    .loading-container {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #050505;
+      z-index: 9999;
+    }
+
+    .loading-spinner {
+      position: relative;
+      width: 60px;
+      height: 60px;
+    }
+
+    .loading-spinner::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #00ff88, #00f0ff);
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      animation: spin 2s linear infinite;
+    }
+
+    .loading-spinner::after {
+      content: '';
+      position: absolute;
+      top: 10%;
+      left: 10%;
+      width: 80%;
+      height: 80%;
+      background: #050505;
+      clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    }
+
+    .loading-text {
+      margin-top: 24px;
+      font-size: 12px;
+      color: #00ff88;
+      letter-spacing: 2px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* Custom cursor styles */
+    @media (pointer: fine) {
+      .custom-cursor {
+        position: fixed;
+        width: 32px;
+        height: 32px;
+        border: 2px solid rgba(0, 255, 136, 0.6);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 99999;
+        mix-blend-mode: difference;
+      }
+
+      .custom-cursor-dot {
+        position: fixed;
+        width: 6px;
+        height: 6px;
+        background: #00ff88;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 99999;
+      }
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0a0a0a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0, 255, 136, 0.3);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 255, 136, 0.5);
+    }
+
+    /* Selection styling */
+    ::selection {
+      background: rgba(0, 255, 136, 0.3);
+      color: #fff;
+    }
+  </style>
+  
+  <!-- Main JS/CSS will be injected by build -->
+  <script type="module" crossorigin src="./assets/main.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/main.css">
+</head>
+
+<body>
+  <div id="root">
+    <!-- Fallback loading state -->
+    <div class="loading-container">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">INITIALIZING WORM AI...</p>
+    </div>
+  </div>
+
+  <!-- Session initialization -->
+  <script>
+    (function() {
+      'use strict';
+      
+      // Initialize session tracking
+      try {
+        const sessionId = 'worm_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+        sessionStorage.setItem('worm_session_id', sessionId);
+        sessionStorage.setItem('worm_session_start', Date.now().toString());
+        
+        // Set device ID
+        let deviceId = localStorage.getItem('worm_device_id');
+        if (!deviceId) {
+          deviceId = 'worm-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+          localStorage.setItem('worm_device_id', deviceId);
+        }
+        
+        console.log('%c[WORM AI] Direct Access Mode Enabled', 'color: #00ff88; font-family: monospace; font-size: 12px;');
+      } catch (e) {
+        // Silent fail for privacy mode
+      }
+    })();
+  </script>
+</body>
+
+</html>
