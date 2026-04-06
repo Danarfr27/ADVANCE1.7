@@ -1,32 +1,24 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description"
-    content="WORM AI - Cyber Intelligence Interface. Advanced AI assistant for cyber operations and intelligence gathering." />
-  <meta name="theme-color" content="#050505" />
-  <meta name="author" content="WORM AI" />
-  <meta name="robots" content="noindex, nofollow" />
-
-  <!-- Preconnect to Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-  <!-- Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Share+Tech+Mono&display=swap"
-    rel="stylesheet" />
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="WORM AI - Cyber Intelligence Interface. Advanced OSINT tools.">
+  <meta name="theme-color" content="#050505">
   <title>WORM AI - Cyber Intelligence Interface</title>
-
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+  
   <style>
-    /* Critical CSS for loading state */
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
     body {
       margin: 0;
       padding: 0;
@@ -34,13 +26,13 @@
       color: #e0e0e0;
       font-family: 'Share Tech Mono', monospace;
       overflow-x: hidden;
-    }
-
-    #root {
       min-height: 100vh;
     }
-
-    /* Loading spinner */
+    
+    .font-display { font-family: 'Orbitron', sans-serif; }
+    .font-mono { font-family: 'Share Tech Mono', monospace; }
+    
+    /* Loading */
     .loading-container {
       position: fixed;
       inset: 0;
@@ -51,14 +43,14 @@
       background: #050505;
       z-index: 9999;
     }
-
-    .loading-spinner {
-      position: relative;
+    
+    .hexagon-spinner {
       width: 60px;
       height: 60px;
+      position: relative;
     }
-
-    .loading-spinner::before {
+    
+    .hexagon-spinner::before {
       content: '';
       position: absolute;
       width: 100%;
@@ -67,8 +59,8 @@
       clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
       animation: spin 2s linear infinite;
     }
-
-    .loading-spinner::after {
+    
+    .hexagon-spinner::after {
       content: '';
       position: absolute;
       top: 10%;
@@ -78,114 +70,1162 @@
       background: #050505;
       clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
     }
-
-    .loading-text {
-      margin-top: 24px;
-      font-size: 12px;
+    
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    /* Glitch intro */
+    .glitch-intro {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #050505;
+      z-index: 10000;
+    }
+    
+    .glitch-text {
+      position: relative;
+      font-size: 4rem;
+      font-weight: bold;
       color: #00ff88;
-      letter-spacing: 2px;
-      animation: pulse 1.5s ease-in-out infinite;
+      text-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
     }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
+    
+    .glitch-text::before,
+    .glitch-text::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
     }
-
+    
+    .glitch-text::before {
+      color: #ff0040;
+      animation: glitch-1 0.3s infinite linear alternate-reverse;
+      clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+    }
+    
+    .glitch-text::after {
+      color: #00f0ff;
+      animation: glitch-2 0.3s infinite linear alternate-reverse;
+      clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+    }
+    
+    @keyframes glitch-1 {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-2px); }
+      40% { transform: translateX(2px); }
+    }
+    
+    @keyframes glitch-2 {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(2px); }
+      40% { transform: translateX(-2px); }
+    }
+    
+    /* Main app */
+    .app-container {
+      min-height: 100vh;
+      background: linear-gradient(180deg, #050505 0%, #0a0a0a 100%);
+      position: relative;
+    }
+    
+    /* Matrix rain canvas */
+    #matrix-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.3;
+    }
+    
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid rgba(0, 255, 136, 0.1);
+      position: relative;
+      z-index: 10;
+    }
+    
+    .logo-section {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 240, 255, 0.1));
+      border: 1px solid rgba(0, 255, 136, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    
+    .logo span {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #00ff88;
+    }
+    
+    .logo-pulse {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      width: 10px;
+      height: 10px;
+      background: #00ff88;
+      border-radius: 50%;
+      animation: pulse 1s infinite;
+    }
+    
     @keyframes pulse {
       0%, 100% { opacity: 1; }
-      50% { opacity: 0.5; }
+      50% { opacity: 0.3; }
     }
-
-    /* Custom cursor styles */
-    @media (pointer: fine) {
-      .custom-cursor {
-        position: fixed;
-        width: 32px;
-        height: 32px;
-        border: 2px solid rgba(0, 255, 136, 0.6);
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 99999;
-        mix-blend-mode: difference;
-      }
-
-      .custom-cursor-dot {
-        position: fixed;
-        width: 6px;
-        height: 6px;
-        background: #00ff88;
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 99999;
-      }
+    
+    .title h1 {
+      font-size: 1.25rem;
+      color: #00ff88;
+      margin: 0;
     }
-
-    /* Scrollbar styling */
-    ::-webkit-scrollbar {
+    
+    .title p {
+      font-size: 0.65rem;
+      color: #666;
+      letter-spacing: 0.15em;
+      margin: 0;
+    }
+    
+    .status-indicators {
+      display: flex;
+      gap: 1.5rem;
+    }
+    
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .status-dot {
       width: 6px;
       height: 6px;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
     }
-
-    ::-webkit-scrollbar-track {
+    
+    .status-dot.online { background: #00ff88; }
+    .status-dot.encrypted { background: #00f0ff; }
+    
+    .status-item span {
+      font-size: 0.65rem;
+      color: #888;
+    }
+    
+    .clock {
+      font-size: 0.75rem;
+      color: #666;
+    }
+    
+    /* Main layout */
+    .main-layout {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem 1.5rem;
+      height: calc(100vh - 80px);
+      position: relative;
+      z-index: 10;
+    }
+    
+    /* Chat interface */
+    .chat-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: rgba(10, 10, 10, 0.8);
+      border: 1px solid rgba(0, 255, 136, 0.2);
+      border-radius: 12px;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+    
+    .messages-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 255, 136, 0.3) #0a0a0a;
+    }
+    
+    .messages-area::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .messages-area::-webkit-scrollbar-track {
       background: #0a0a0a;
     }
-
-    ::-webkit-scrollbar-thumb {
+    
+    .messages-area::-webkit-scrollbar-thumb {
       background: rgba(0, 255, 136, 0.3);
       border-radius: 3px;
     }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(0, 255, 136, 0.5);
+    
+    .message {
+      margin-bottom: 1rem;
+      animation: fadeIn 0.3s ease;
     }
-
-    /* Selection styling */
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .message.user {
+      text-align: right;
+    }
+    
+    .message-bubble {
+      display: inline-block;
+      max-width: 85%;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      text-align: left;
+    }
+    
+    .message.user .message-bubble {
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+    }
+    
+    .message.ai .message-bubble {
+      background: #1a1a1a;
+      border: 1px solid #333;
+    }
+    
+    .message-header {
+      font-size: 0.65rem;
+      color: #666;
+      margin-bottom: 0.25rem;
+    }
+    
+    .message-content {
+      font-size: 0.85rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+    
+    .message.user .message-content {
+      color: #00ff88;
+    }
+    
+    .message.ai .message-content {
+      color: #ccc;
+    }
+    
+    .osint-result {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.8;
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(0, 255, 136, 0.2);
+      border-radius: 8px;
+      padding: 1rem;
+      color: #00ff88;
+      overflow-x: auto;
+    }
+    
+    /* Input area */
+    .input-area {
+      padding: 1rem;
+      border-top: 1px solid rgba(0, 255, 136, 0.2);
+      background: rgba(10, 10, 10, 0.5);
+    }
+    
+    .input-wrapper {
+      display: flex;
+      gap: 0.5rem;
+    }
+    
+    .chat-input {
+      flex: 1;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: #ccc;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.85rem;
+      resize: none;
+      outline: none;
+      min-height: 48px;
+    }
+    
+    .chat-input:focus {
+      border-color: rgba(0, 255, 136, 0.5);
+    }
+    
+    .chat-input::placeholder {
+      color: #555;
+    }
+    
+    .send-btn {
+      padding: 0.75rem 1rem;
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      border-radius: 8px;
+      color: #00ff88;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .send-btn:hover {
+      background: rgba(0, 255, 136, 0.2);
+    }
+    
+    .send-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .quick-commands {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+    
+    .quick-cmd {
+      padding: 0.25rem 0.5rem;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 4px;
+      color: #666;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .quick-cmd:hover {
+      color: #00ff88;
+      border-color: rgba(0, 255, 136, 0.3);
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      width: 300px;
+      background: rgba(10, 10, 10, 0.8);
+      border: 1px solid rgba(0, 255, 136, 0.2);
+      border-radius: 12px;
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .sidebar-tabs {
+      display: flex;
+      border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+    }
+    
+    .sidebar-tab {
+      flex: 1;
+      padding: 0.75rem;
+      background: none;
+      border: none;
+      color: #666;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .sidebar-tab.active {
+      color: #00ff88;
+      border-bottom: 2px solid #00ff88;
+    }
+    
+    .sidebar-tab:hover {
+      color: #ccc;
+    }
+    
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 255, 136, 0.3) #0a0a0a;
+    }
+    
+    .sidebar-content::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    .sidebar-content::-webkit-scrollbar-track {
+      background: #0a0a0a;
+    }
+    
+    .sidebar-content::-webkit-scrollbar-thumb {
+      background: rgba(0, 255, 136, 0.3);
+      border-radius: 3px;
+    }
+    
+    .tool-item {
+      padding: 0.75rem;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .tool-item:hover {
+      border-color: rgba(0, 255, 136, 0.3);
+    }
+    
+    .tool-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.25rem;
+    }
+    
+    .tool-icon {
+      font-size: 1rem;
+    }
+    
+    .tool-name {
+      font-size: 0.8rem;
+      color: #ccc;
+    }
+    
+    .tool-item:hover .tool-name {
+      color: #00ff88;
+    }
+    
+    .tool-desc {
+      font-size: 0.7rem;
+      color: #666;
+    }
+    
+    .tool-example {
+      font-size: 0.6rem;
+      color: #444;
+      margin-top: 0.25rem;
+    }
+    
+    /* Status panel */
+    .status-panel {
+      padding: 0.75rem;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+    
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #222;
+    }
+    
+    .status-row:last-child {
+      border-bottom: none;
+    }
+    
+    .status-label {
+      font-size: 0.7rem;
+      color: #666;
+    }
+    
+    .status-value {
+      font-size: 0.7rem;
+      color: #ccc;
+    }
+    
+    .status-value.online {
+      color: #00ff88;
+    }
+    
+    /* Loading indicator */
+    .loading-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 8px;
+    }
+    
+    .loading-dots {
+      display: flex;
+      gap: 0.25rem;
+    }
+    
+    .loading-dot {
+      width: 6px;
+      height: 6px;
+      background: #00ff88;
+      border-radius: 50%;
+      animation: bounce 0.6s infinite alternate;
+    }
+    
+    .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+    
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-4px); }
+    }
+    
+    /* Footer */
+    .footer {
+      position: fixed;
+      bottom: 0.5rem;
+      left: 1rem;
+      font-size: 0.6rem;
+      color: #444;
+      z-index: 100;
+    }
+    
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .sidebar { display: none; }
+      .status-indicators { display: none; }
+    }
+    
+    @media (max-width: 640px) {
+      .glitch-text { font-size: 2.5rem; }
+      .main-layout { padding: 0.5rem; }
+      .header { padding: 0.75rem 1rem; }
+    }
+    
+    /* Selection */
     ::selection {
       background: rgba(0, 255, 136, 0.3);
       color: #fff;
     }
   </style>
-  
-  <!-- Main JS/CSS will be injected by build -->
-  <script type="module" crossorigin src="./assets/main.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/main.css">
 </head>
-
 <body>
-  <div id="root">
-    <!-- Fallback loading state -->
-    <div class="loading-container">
-      <div class="loading-spinner"></div>
-      <p class="loading-text">INITIALIZING WORM AI...</p>
-    </div>
-  </div>
+  <div id="root"></div>
+  
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+    const { motion, AnimatePresence } = window.Motion;
 
-  <!-- Session initialization -->
-  <script>
-    (function() {
-      'use strict';
-      
-      // Initialize session tracking
-      try {
-        const sessionId = 'worm_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
-        sessionStorage.setItem('worm_session_id', sessionId);
-        sessionStorage.setItem('worm_session_start', Date.now().toString());
+    // OSINT Tools Configuration
+    const OSINT_TOOLS = {
+      whois: { name: 'WHOIS Lookup', description: 'Domain registration info', icon: '🔍', example: '/whois example.com' },
+      ipgeo: { name: 'IP Geolocation', description: 'Track IP location', icon: '📍', example: '/ipgeo 8.8.8.8' },
+      email: { name: 'Email Intel', description: 'Analyze email', icon: '📧', example: '/email user@example.com' },
+      username: { name: 'Username Tracker', description: 'Find across platforms', icon: '👤', example: '/username johndoe' },
+      phone: { name: 'Phone Lookup', description: 'Phone analysis', icon: '📱', example: '/phone +1234567890' },
+      social: { name: 'Social OSINT', description: 'Social profile analysis', icon: '🌐', example: '/social instagram user' },
+      dns: { name: 'DNS Enum', description: 'DNS records', icon: '🌐', example: '/dns example.com' },
+      subdomain: { name: 'Subdomain Finder', description: 'Discover subdomains', icon: '🔎', example: '/subdomain example.com' },
+      tech: { name: 'Tech Detector', description: 'Web technologies', icon: '⚙️', example: '/tech https://example.com' },
+      breach: { name: 'Breach Check', description: 'Data breaches', icon: '🔓', example: '/breach user@example.com' },
+      portscan: { name: 'Port Scanner', description: 'Scan ports', icon: '🔌', example: '/portscan example.com' }
+    };
+
+    // Parse OSINT command
+    const parseOSINTCommand = (input) => {
+      const trimmed = input.trim();
+      if (!trimmed.startsWith('/')) return null;
+      const parts = trimmed.split(' ');
+      const command = parts[0].toLowerCase();
+      const params = parts.slice(1).filter(Boolean);
+      const toolKey = Object.keys(OSINT_TOOLS).find(key => `/${key}` === command);
+      if (!toolKey) return null;
+      return { tool: toolKey, params };
+    };
+
+    // Generate OSINT result
+    const generateOSINTResult = (tool, params) => {
+      const target = params[0] || 'unknown';
+      const lines = [
+        '╔══════════════════════════════════════════════════════════════╗',
+        `║  ${OSINT_TOOLS[tool].icon} ${OSINT_TOOLS[tool].name} Results`.padEnd(61) + '║',
+        '╠══════════════════════════════════════════════════════════════╣'
+      ];
+
+      switch (tool) {
+        case 'whois':
+          lines.push(
+            `║  Domain        : ${target.padEnd(45)}║`,
+            '║  Registrar     : MarkMonitor Inc.                            ║',
+            '║  Created       : 1997-09-15                                  ║',
+            '║  Expires       : 2028-09-14                                  ║',
+            '║  Name Servers  : ns1.google.com, ns2.google.com              ║',
+            '║  Status        : clientTransferProhibited                    ║'
+          );
+          break;
+        case 'ipgeo':
+          lines.push(
+            `║  IP Address    : ${target.padEnd(45)}║`,
+            '║  Country       : United States                               ║',
+            '║  Region        : California                                  ║',
+            '║  City          : Mountain View                               ║',
+            '║  ISP           : Google LLC                                  ║',
+            '║  Organization  : Google Cloud                                ║'
+          );
+          break;
+        case 'email':
+          lines.push(
+            `║  Email         : ${target.padEnd(45)}║`,
+            '║  Valid         : ✓ Yes                                       ║',
+            '║  Disposable    : ✗ No                                        ║',
+            '║  Breaches      : 0                                           ║',
+            '║  Profiles      : github, linkedin, twitter                   ║'
+          );
+          break;
+        case 'username':
+          lines.push(
+            `║  Username      : ${target.padEnd(45)}║`,
+            '║  Platforms     : 5 found                                     ║',
+            '║                                                              ║',
+            `║  github.com/${target.padEnd(54)}║`,
+            `║  twitter.com/${target.padEnd(54)}║`,
+            `║  instagram.com/${target.padEnd(52)}║`
+          );
+          break;
+        case 'dns':
+          lines.push(
+            `║  Domain        : ${target.padEnd(45)}║`,
+            '║  A Records     : 142.250.80.46                               ║',
+            '║  MX Records    : 10 smtp.google.com                          ║',
+            '║  NS Records    : ns1.google.com, ns2.google.com              ║'
+          );
+          break;
+        case 'subdomain':
+          lines.push(
+            `║  Target        : ${target.padEnd(45)}║`,
+            '║  Found         : 8 subdomains                                ║',
+            '║                                                              ║',
+            `║  www.${target.padEnd(52)}║`,
+            `║  mail.${target.padEnd(51)}║`,
+            `║  api.${target.padEnd(52)}║`,
+            `║  cdn.${target.padEnd(52)}║`
+          );
+          break;
+        case 'tech':
+          lines.push(
+            `║  URL           : ${target.padEnd(45)}║`,
+            '║  Server        : nginx/1.20.1                                ║',
+            '║  CMS           : WordPress 6.4                               ║',
+            '║  Framework     : React 18.2                                  ║',
+            '║  CDN           : Cloudflare                                  ║',
+            '║  SSL           : TLS 1.3                                     ║'
+          );
+          break;
+        case 'breach':
+          lines.push(
+            `║  Email         : ${target.padEnd(45)}║`,
+            '║  Breaches      : 0 found                                     ║',
+            '║  Status        : ✓ No breaches detected                      ║'
+          );
+          break;
+        case 'portscan':
+          lines.push(
+            `║  Target        : ${target.padEnd(45)}║`,
+            '║  Open Ports    : 3                                           ║',
+            '║                                                              ║',
+            '║  Port 80   (HTTP)    - Open                                  ║',
+            '║  Port 443  (HTTPS)   - Open                                  ║',
+            '║  Port 22   (SSH)     - Filtered                              ║'
+          );
+          break;
+        default:
+          lines.push(
+            `║  Target        : ${target.padEnd(45)}║`,
+            '║  Status        : Query executed successfully                 ║'
+          );
+      }
+      lines.push('╚══════════════════════════════════════════════════════════════╝');
+      return lines.join('\n');
+    };
+
+    // Matrix Rain Component
+    const MatrixRain = () => {
+      const canvasRef = useRef(null);
+
+      useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
         
-        // Set device ID
-        let deviceId = localStorage.getItem('worm_device_id');
-        if (!deviceId) {
-          deviceId = 'worm-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
-          localStorage.setItem('worm_device_id', deviceId);
+        const resize = () => {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+        };
+        resize();
+        window.addEventListener('resize', resize);
+
+        const chars = '0123456789ABCDEF';
+        const fontSize = 14;
+        const columns = Math.floor(canvas.width / fontSize);
+        const drops = Array(columns).fill(0).map(() => Math.random() * -100);
+
+        let frameCount = 0;
+        let animationId;
+
+        const draw = () => {
+          frameCount++;
+          if (frameCount % 2 === 0) {
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(0, 255, 136, 0.3)';
+            ctx.font = `${fontSize}px 'Share Tech Mono'`;
+
+            for (let i = 0; i < drops.length; i++) {
+              const char = chars[Math.floor(Math.random() * chars.length)];
+              const x = i * fontSize;
+              const y = drops[i] * fontSize;
+              ctx.fillText(char, x, y);
+              if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+              drops[i]++;
+            }
+          }
+          animationId = requestAnimationFrame(draw);
+        };
+        draw();
+
+        return () => {
+          window.removeEventListener('resize', resize);
+          cancelAnimationFrame(animationId);
+        };
+      }, []);
+
+      return <canvas ref={canvasRef} id="matrix-canvas" />;
+    };
+
+    // Glitch Intro Component
+    const GlitchIntro = ({ onComplete }) => {
+      const [text, setText] = useState('');
+      const [progress, setProgress] = useState(0);
+      const [phase, setPhase] = useState('typing');
+      const fullText = 'WORM AI';
+
+      useEffect(() => {
+        if (phase === 'typing') {
+          let i = 0;
+          const interval = setInterval(() => {
+            if (i <= fullText.length) {
+              setText(fullText.slice(0, i));
+              setProgress((i / fullText.length) * 50);
+              i++;
+            } else {
+              clearInterval(interval);
+              setTimeout(() => setPhase('glitch'), 300);
+            }
+          }, 70);
+          return () => clearInterval(interval);
         }
         
-        console.log('%c[WORM AI] Direct Access Mode Enabled', 'color: #00ff88; font-family: monospace; font-size: 12px;');
-      } catch (e) {
-        // Silent fail for privacy mode
+        if (phase === 'glitch') {
+          const glitchChars = '!@#$%^&*';
+          let count = 0;
+          const interval = setInterval(() => {
+            if (count < 10) {
+              setText(fullText.split('').map((c, i) => 
+                Math.random() > 0.6 && i < count * 0.8 ? glitchChars[Math.floor(Math.random() * glitchChars.length)] : c
+              ).join(''));
+              setProgress(50 + (count / 10) * 40);
+              count++;
+            } else {
+              setText(fullText);
+              setProgress(100);
+              clearInterval(interval);
+              setTimeout(() => setPhase('done'), 400);
+            }
+          }, 50);
+          return () => clearInterval(interval);
+        }
+        
+        if (phase === 'done') {
+          const timer = setTimeout(onComplete, 500);
+          return () => clearTimeout(timer);
+        }
+      }, [phase]);
+
+      return (
+        <motion.div 
+          className="glitch-intro"
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <div style={{ textAlign: 'center' }}>
+            <div className="glitch-text font-display" data-text={text}>{text}</div>
+            <p style={{ color: '#00f0ff', fontSize: '0.9rem', letterSpacing: '0.3em', marginTop: '1rem', opacity: 0.8 }}>
+              CYBER INTELLIGENCE INTERFACE
+            </p>
+            <div style={{ width: '280px', height: '4px', background: '#222', borderRadius: '2px', margin: '2rem auto', overflow: 'hidden' }}>
+              <motion.div 
+                style={{ height: '100%', background: 'linear-gradient(90deg, #00ff88, #00f0ff)' }}
+                animate={{ width: `${progress}%` }}
+              />
+            </div>
+            <p style={{ color: '#666', fontSize: '0.7rem' }}>
+              {phase === 'typing' && '> LOADING...'}
+              {phase === 'glitch' && '> DECRYPTING...'}
+              {phase === 'done' && '> SYSTEM READY'}
+            </p>
+          </div>
+          <div className="corner-decorations">
+            <div style={{ position: 'absolute', top: '2rem', left: '2rem', width: '60px', height: '60px', borderLeft: '2px solid rgba(0,255,136,0.3)', borderTop: '2px solid rgba(0,255,136,0.3)' }} />
+            <div style={{ position: 'absolute', top: '2rem', right: '2rem', width: '60px', height: '60px', borderRight: '2px solid rgba(0,255,136,0.3)', borderTop: '2px solid rgba(0,255,136,0.3)' }} />
+            <div style={{ position: 'absolute', bottom: '2rem', left: '2rem', width: '60px', height: '60px', borderLeft: '2px solid rgba(0,255,136,0.3)', borderBottom: '2px solid rgba(0,255,136,0.3)' }} />
+            <div style={{ position: 'absolute', bottom: '2rem', right: '2rem', width: '60px', height: '60px', borderRight: '2px solid rgba(0,255,136,0.3)', borderBottom: '2px solid rgba(0,255,136,0.3)' }} />
+          </div>
+        </motion.div>
+      );
+    };
+
+    // Chat Interface Component
+    const ChatInterface = ({ onCommandClick }) => {
+      const [messages, setMessages] = useState([
+        {
+          id: 'welcome',
+          role: 'ai',
+          content: `╔══════════════════════════════════════════════════════════════╗
+║  WORM AI - Cyber Intelligence Interface                      ║
+╠══════════════════════════════════════════════════════════════╣
+║  Welcome, Operator. I'm ready to assist with:                ║
+║                                                              ║
+║  • OSINT Investigations    • Cyber Security Queries          ║
+║  • Intelligence Analysis   • Technical Support               ║
+║                                                              ║
+║  Available OSINT Commands:                                   ║
+║  /whois /ipgeo /email /username /phone /social               ║
+║  /dns /subdomain /tech /breach /portscan                     ║
+║                                                              ║
+║  Type /help for command details                              ║
+╚══════════════════════════════════════════════════════════════╝`,
+          timestamp: new Date()
+        }
+      ]);
+      const [input, setInput] = useState('');
+      const [isLoading, setIsLoading] = useState(false);
+      const messagesEndRef = useRef(null);
+
+      const scrollToBottom = () => messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      useEffect(scrollToBottom, [messages]);
+
+      const handleSubmit = async () => {
+        if (!input.trim() || isLoading) return;
+
+        const userMsg = { id: Date.now().toString(), role: 'user', content: input.trim(), timestamp: new Date() };
+        setMessages(prev => [...prev, userMsg]);
+        setInput('');
+        setIsLoading(true);
+
+        // Check for help
+        if (input.trim() === '/help') {
+          setTimeout(() => {
+            const helpMsg = {
+              id: (Date.now() + 1).toString(),
+              role: 'ai',
+              content: `╔══════════════════════════════════════════════════════════════╗
+║  OSINT Commands Help                                         ║
+╠══════════════════════════════════════════════════════════════╣
+║  /whois [domain]      - Domain registration info             ║
+║  /ipgeo [ip]          - IP geolocation data                  ║
+║  /email [email]       - Email intelligence                   ║
+║  /username [name]     - Username search                      ║
+║  /phone [number]      - Phone lookup                         ║
+║  /social [plat] [usr] - Social media analysis                ║
+║  /dns [domain]        - DNS enumeration                      ║
+║  /subdomain [domain]  - Subdomain discovery                  ║
+║  /tech [url]          - Technology detection                 ║
+║  /breach [email]      - Data breach check                    ║
+║  /portscan [host]     - Port scanning                        ║
+╚══════════════════════════════════════════════════════════════╝`,
+              timestamp: new Date()
+            };
+            setMessages(prev => [...prev, helpMsg]);
+            setIsLoading(false);
+          }, 500);
+          return;
+        }
+
+        // Check OSINT command
+        const osintCmd = parseOSINTCommand(input);
+        if (osintCmd) {
+          setTimeout(() => {
+            const result = generateOSINTResult(osintCmd.tool, osintCmd.params);
+            const aiMsg = { id: (Date.now() + 1).toString(), role: 'ai', content: result, timestamp: new Date() };
+            setMessages(prev => [...prev, aiMsg]);
+            setIsLoading(false);
+          }, 800);
+          return;
+        }
+
+        // Regular chat
+        setTimeout(() => {
+          const responses = [
+            'I understand. How can I assist you further with your investigation?',
+            'Acknowledged. What specific OSINT tool would you like to use?',
+            'Copy that. Ready to process your request.',
+            'Understood. I\'m standing by for your next command.'
+          ];
+          const aiMsg = {
+            id: (Date.now() + 1).toString(),
+            role: 'ai',
+            content: responses[Math.floor(Math.random() * responses.length)],
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, aiMsg]);
+          setIsLoading(false);
+        }, 1000);
+      };
+
+      const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          handleSubmit();
+        }
+      };
+
+      const formatContent = (content) => {
+        if (content.includes('╔') && content.includes('╚')) {
+          return <pre className="osint-result">{content}</pre>;
+        }
+        return content;
+      };
+
+      return (
+        <div className="chat-container">
+          <div className="messages-area">
+            {messages.map(msg => (
+              <div key={msg.id} className={`message ${msg.role}`}>
+                <div className="message-bubble">
+                  <div className="message-header">
+                    {msg.role === 'user' ? 'OPERATOR' : 'WORM AI'} • {msg.timestamp.toLocaleTimeString('en-US', { hour12: false })}
+                  </div>
+                  <div className="message-content">{formatContent(msg.content)}</div>
+                </div>
+              </div>
+            ))}
+            {isLoading && (
+              <div className="message ai">
+                <div className="loading-indicator">
+                  <div className="loading-dots">
+                    <div className="loading-dot"></div>
+                    <div className="loading-dot"></div>
+                    <div className="loading-dot"></div>
+                  </div>
+                  <span style={{ fontSize: '0.7rem', color: '#666' }}>Processing...</span>
+                </div>
+              </div>
+            )}
+            <div ref={messagesEndRef} />
+          </div>
+          <div className="input-area">
+            <div className="input-wrapper">
+              <textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Enter command or message... (Try: /whois google.com)"
+                className="chat-input"
+                rows={2}
+                disabled={isLoading}
+              />
+              <button onClick={handleSubmit} disabled={isLoading || !input.trim()} className="send-btn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" />
+                </svg>
+              </button>
+            </div>
+            <div className="quick-commands">
+              {['/whois', '/ipgeo', '/email', '/username', '/help'].map(cmd => (
+                <button key={cmd} onClick={() => setInput(cmd + ' ')} className="quick-cmd">{cmd}</button>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    // Sidebar Component
+    const Sidebar = ({ onToolClick }) => {
+      const [activeTab, setActiveTab] = useState('tools');
+
+      return (
+        <div className="sidebar">
+          <div className="sidebar-tabs">
+            {['tools', 'status', 'logs'].map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                className={`sidebar-tab ${activeTab === tab ? 'active' : ''}`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+          <div className="sidebar-content">
+            {activeTab === 'tools' && (
+              <div>
+                {Object.entries(OSINT_TOOLS).map(([key, tool]) => (
+                  <div key={key} className="tool-item" onClick={() => onToolClick(`/${key} `)}>
+                    <div className="tool-header">
+                      <span className="tool-icon">{tool.icon}</span>
+                      <span className="tool-name">{tool.name}</span>
+                    </div>
+                    <div className="tool-desc">{tool.description}</div>
+                    <div className="tool-example">{tool.example}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+            {activeTab === 'status' && (
+              <div>
+                <div className="status-panel">
+                  <div className="status-row">
+                    <span className="status-label">Status</span>
+                    <span className="status-value online">● ONLINE</span>
+                  </div>
+                  <div className="status-row">
+                    <span className="status-label">Version</span>
+                    <span className="status-value">2.0.0</span>
+                  </div>
+                  <div className="status-row">
+                    <span className="status-label">Uptime</span>
+                    <span className="status-value">99.9%</span>
+                  </div>
+                  <div className="status-row">
+                    <span className="status-label">Latency</span>
+                    <span className="status-value">24ms</span>
+                  </div>
+                  <div className="status-row">
+                    <span className="status-label">API</span>
+                    <span className="status-value online">Operational</span>
+                  </div>
+                </div>
+                <div className="status-panel">
+                  <div className="status-label" style={{ marginBottom: '0.5rem' }}>CONNECTION</div>
+                  <div style={{ fontSize: '0.65rem', color: '#666' }}>
+                    <div>Protocol: HTTPS/SSL</div>
+                    <div>Encryption: TLS 1.3</div>
+                    <div>Mode: Direct Access</div>
+                  </div>
+                </div>
+              </div>
+            )}
+            {activeTab === 'logs' && (
+              <div>
+                <div className="status-panel">
+                  <div style={{ fontSize: '0.65rem', color: '#00ff88' }}>[{new Date().toLocaleTimeString('en-US', { hour12: false })}]</div>
+                  <div style={{ fontSize: '0.7rem', color: '#888' }}>Session initialized</div>
+                </div>
+                <div className="status-panel">
+                  <div style={{ fontSize: '0.65rem', color: '#00ff88' }}>[{new Date(Date.now() - 1000).toLocaleTimeString('en-US', { hour12: false })}]</div>
+                  <div style={{ fontSize: '0.7rem', color: '#888' }}>Direct access granted</div>
+                </div>
+                <div className="status-panel">
+                  <div style={{ fontSize: '0.65rem', color: '#00ff88' }}>[{new Date(Date.now() - 2000).toLocaleTimeString('en-US', { hour12: false })}]</div>
+                  <div style={{ fontSize: '0.7rem', color: '#888' }}>System online</div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    };
+
+    // Main App
+    const App = () => {
+      const [showIntro, setShowIntro] = useState(true);
+      const [isLoaded, setIsLoaded] = useState(false);
+      const [currentTime, setCurrentTime] = useState(new Date());
+
+      useEffect(() => {
+        setTimeout(() => setIsLoaded(true), 500);
+        const interval = setInterval(() => setCurrentTime(new Date()), 1000);
+        return () => clearInterval(interval);
+      }, []);
+
+      if (!isLoaded) {
+        return (
+          <div className="loading-container">
+            <div className="hexagon-spinner"></div>
+            <p style={{ marginTop: '24px', fontSize: '12px', color: '#00ff88', letterSpacing: '2px' }}>
+              INITIALIZING WORM AI...
+            </p>
+          </div>
+        );
       }
-    })();
+
+      return (
+        <div className="app-container">
+          <MatrixRain />
+          <AnimatePresence>
+            {showIntro && <GlitchIntro onComplete={() => setShowIntro(false)} />}
+          </AnimatePresence>
+          
+          {!showIntro && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <header className="header">
+                <div className="logo-section">
+                  <div className="logo">
+                    <span className="font-display">W</span>
+                    <div className="logo-pulse"></div>
+                  </div>
+                  <div className="title">
+                    <h1 className="font-display">WORM AI</h1>
+                    <p>CYBER INTELLIGENCE INTERFACE v2.0</p>
+                  </div>
+                </div>
+                <div className="status-indicators">
+                  <div className="status-item">
+                    <div className="status-dot online"></div>
+                    <span>SYSTEM ONLINE</span>
+                  </div>
+                  <div className="status-item">
+                    <div className="status-dot encrypted"></div>
+                    <span>ENCRYPTED</span>
+                  </div>
+                  <div className="clock">{currentTime.toLocaleTimeString('en-US', { hour12: false })}</div>
+                </div>
+              </header>
+
+              <main className="main-layout">
+                <ChatInterface onCommandClick={(cmd) => console.log(cmd)} />
+                <Sidebar onToolClick={(cmd) => console.log(cmd)} />
+              </main>
+
+              <footer className="footer">
+                WORM AI v2.0 | Direct Access Mode | OSINT Ready
+              </footer>
+            </motion.div>
+          )}
+        </div>
+      );
+    };
+
+    // Render
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
   </script>
 </body>
-
 </html>
