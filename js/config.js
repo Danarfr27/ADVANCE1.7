@@ -4,7 +4,7 @@
  */
 
 // Backend endpoint
-export const BACKEND_ENDPOINT = '/api/chat';
+export const BACKEND_ENDPOINT = 'https://ai-yura.vercel.app/api/chat';
 
 // OSINT Tool Definitions
 export const OSINT_TOOLS = {
